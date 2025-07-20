@@ -40,14 +40,14 @@ const SocialNavbar = () => {
   }, [location]);
 
   const navLinks = [
-    { name: 'Feed', path: '/', icon: Home },
-    { name: 'Create', path: '/create', icon: Plus },
-    { name: 'Profile', path: `/profile/${currentUser.username}`, icon: User },
+    { name: 'Feed', path: '/social', icon: Home },
+    { name: 'Create', path: '/social/create-post', icon: Plus },
+    { name: 'Profile', path: `/social/profile/${currentUser.username}`, icon: User },
   ];
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === '/social') {
+      return location.pathname === '/social';
     }
     return location.pathname.startsWith(path);
   };

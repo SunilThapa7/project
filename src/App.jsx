@@ -11,7 +11,6 @@ import { CartProvider } from './context/CartContext';
 
 // Layout components
 import Layout from './components/layout/Layout';
-import SocialLayout from './components/layout/SocialLayout';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -48,14 +47,12 @@ const router = createBrowserRouter(
       <Route path="training" element={<TrainingPage />} />
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="admin/dashboard" element={<AdminDashboardPage />} />
-
-      {/* Social feed routes */}
-      <Route path="social" element={<SocialLayout />}>
-        <Route index element={<Feed />} />
-        <Route path="profile/:id" element={<ProfilePage />} />
-        <Route path="post/:id" element={<PostDetailsPage />} />
-        <Route path="create-post" element={<CreatePostPage />} />
-      </Route>
+      
+      {/* Social Features */}
+      <Route path="feed" element={<Feed />} />
+      <Route path="create-post" element={<CreatePostPage />} />
+      <Route path="post/:id" element={<PostDetailsPage />} />
+      <Route path="profile/:id" element={<ProfilePage />} />
     </Route>
   ),
   {

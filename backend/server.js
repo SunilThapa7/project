@@ -4,9 +4,13 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
 
 // Set environment variables
-process.env.JWT_SECRET = 'agriconnect-super-secret-key-123';
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 process.env.JWT_EXPIRE = '24h';
 process.env.NODE_ENV = 'development';
 
@@ -17,7 +21,6 @@ const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
-const orderRoutes = require('./routes/orders');
 const userRoutes = require('./routes/users');
 const cartRoutes = require('./routes/cart');
 const postRoutes = require('./routes/posts');
@@ -60,7 +63,6 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/posts', postRoutes);
