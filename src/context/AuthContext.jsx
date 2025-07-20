@@ -27,7 +27,10 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
@@ -37,11 +40,12 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         return true;
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || data.errors?.[0]?.msg || 'Login failed');
         return false;
       }
     } catch (err) {
-      setError('Network error');
+      console.error('Login error:', err);
+      setError('Network error or server not responding. Please make sure the backend server is running.');
       return false;
     } finally {
       setLoading(false);
@@ -54,7 +58,10 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(form)
       });
       const data = await res.json();
@@ -64,11 +71,12 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         return true;
       } else {
-        setError(data.message || 'Signup failed');
+        setError(data.message || data.errors?.[0]?.msg || 'Signup failed');
         return false;
       }
     } catch (err) {
-      setError('Network error');
+      console.error('Signup error:', err);
+      setError('Network error or server not responding. Please make sure the backend server is running.');
       return false;
     } finally {
       setLoading(false);

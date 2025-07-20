@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../context/ThemeContext';
+import { AuthContext } from '../../context/AuthContext';
+import { CartContext } from '../../context/CartContext';
 import { 
   Sun, 
   Moon, 
@@ -8,6 +10,7 @@ import {
   X, 
   User, 
   LogIn, 
+  LogOut,
   ShoppingCart,
   Sprout
 } from 'lucide-react';
@@ -28,7 +31,10 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { user, logout } = useContext(AuthContext);
+  const { getCartCount } = useContext(CartContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +47,11 @@ const Header = () => {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <header 
@@ -92,37 +103,56 @@ const Header = () => {
             {/* Theme Toggle */}
             <button 
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? (
-                <Sun className="h-5 w-5 text-yellow-400" />
+                <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
               ) : (
-                <Moon className="h-5 w-5 text-gray-700" />
+                <Moon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
               )}
             </button>
             
             {/* Cart */}
             <Link 
-              to="/ecommerce" 
+              to="/cart" 
               className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 relative"
             >
               <ShoppingCart className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 text-xs rounded-full bg-primary-600 text-white flex items-center justify-center">
-                0
-              </span>
+              {getCartCount() > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 text-xs rounded-full bg-primary-600 text-white flex items-center justify-center">
+                  {getCartCount()}
+                </span>
+              )}
             </Link>
             
             {/* Auth Buttons */}
             <div className="hidden md:flex space-x-2">
-              <button className="btn btn-secondary flex items-center space-x-1 text-sm">
-                <LogIn className="h-4 w-4" />
-                <span>Login</span>
-              </button>
-              <button className="btn btn-primary flex items-center space-x-1 text-sm">
-                <User className="h-4 w-4" />
-                <span>Register</span>
-              </button>
+              {user ? (
+                <>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">
+                    Welcome, {user.name}
+                  </span>
+                  <button 
+                    onClick={handleLogout}
+                    className="btn btn-secondary flex items-center space-x-1 text-sm"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="btn btn-secondary flex items-center space-x-1 text-sm">
+                    <LogIn className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
+                  <Link to="/signup" className="btn btn-primary flex items-center space-x-1 text-sm">
+                    <User className="h-4 w-4" />
+                    <span>Register</span>
+                  </Link>
+                </>
+              )}
             </div>
             
             {/* Mobile Menu Button */}
@@ -174,14 +204,26 @@ const Header = () => {
           
           {/* Mobile Auth Buttons */}
           <div className="flex space-x-2 pt-2">
-            <button className="btn btn-secondary flex items-center space-x-1 text-sm flex-1">
-              <LogIn className="h-4 w-4" />
-              <span>Login</span>
-            </button>
-            <button className="btn btn-primary flex items-center space-x-1 text-sm flex-1">
-              <User className="h-4 w-4" />
-              <span>Register</span>
-            </button>
+            {user ? (
+              <button 
+                onClick={handleLogout}
+                className="btn btn-secondary flex items-center space-x-1 text-sm flex-1"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <>
+                <Link to="/login" className="btn btn-secondary flex items-center space-x-1 text-sm flex-1">
+                  <LogIn className="h-4 w-4" />
+                  <span>Login</span>
+                </Link>
+                <Link to="/signup" className="btn btn-primary flex items-center space-x-1 text-sm flex-1">
+                  <User className="h-4 w-4" />
+                  <span>Register</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

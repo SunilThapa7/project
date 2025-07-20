@@ -9,8 +9,11 @@ const router = express.Router();
 
 // Generate JWT token
 const generateToken = (id) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+  }
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+    expiresIn: process.env.JWT_EXPIRE || '24h'
   });
 };
 
@@ -19,7 +22,7 @@ const generateToken = (id) => {
 // @access  Public
 router.post('/register', validateRegister, async (req, res) => {
   try {
-    const { name, email, password, phone, address } = req.body;
+    const { name, email, password, phone, address, role } = req.body;
 
     // Check if user already exists
     const [existingUsers] = await db.execute(
@@ -34,6 +37,15 @@ router.post('/register', validateRegister, async (req, res) => {
       });
     }
 
+    // Validate role
+    const allowedRoles = ['customer', 'seller'];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid role selected'
+      });
+    }
+
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -41,8 +53,8 @@ router.post('/register', validateRegister, async (req, res) => {
     // Create user
     const [result] = await db.execute(
       `INSERT INTO users (name, email, password, phone, address, role, status, created_at) 
-       VALUES (?, ?, ?, ?, ?, 'customer', 'active', NOW())`,
-      [name, email, hashedPassword, phone || null, address || null]
+       VALUES (?, ?, ?, ?, ?, ?, 'active', NOW())`,
+      [name, email, hashedPassword, phone || null, address || null, role]
     );
 
     // Generate token
@@ -57,7 +69,7 @@ router.post('/register', validateRegister, async (req, res) => {
           name,
           email,
           phone,
-          role: 'customer'
+          role
         },
         token
       }
@@ -77,14 +89,17 @@ router.post('/register', validateRegister, async (req, res) => {
 router.post('/login', validateLogin, async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt for email:', email);
 
     // Check if user exists
     const [users] = await db.execute(
       'SELECT id, name, email, password, phone, role, status FROM users WHERE email = ?',
       [email]
     );
+    console.log('Found users:', users.length);
 
     if (users.length === 0) {
+      console.log('No user found with email:', email);
       return res.status(401).json({
         status: 'error',
         message: 'Invalid credentials'
@@ -92,9 +107,11 @@ router.post('/login', validateLogin, async (req, res) => {
     }
 
     const user = users[0];
+    console.log('User found:', { id: user.id, email: user.email, role: user.role, status: user.status });
 
     // Check if account is active
     if (user.status !== 'active') {
+      console.log('Account not active for user:', user.id);
       return res.status(401).json({
         status: 'error',
         message: 'Account is not active'
@@ -103,32 +120,48 @@ router.post('/login', validateLogin, async (req, res) => {
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password match:', isMatch);
+    
     if (!isMatch) {
+      console.log('Invalid password for user:', user.id);
       return res.status(401).json({
         status: 'error',
         message: 'Invalid credentials'
       });
     }
 
-    // Generate token
-    const token = generateToken(user.id);
+    try {
+      // Generate token
+      const token = generateToken(user.id);
+      console.log('Generated token for user:', user.id);
 
-    res.json({
-      status: 'success',
-      message: 'Login successful',
-      data: {
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          role: user.role
-        },
-        token
-      }
-    });
+      res.json({
+        status: 'success',
+        message: 'Login successful',
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role
+          },
+          token
+        }
+      });
+    } catch (tokenError) {
+      console.error('Token generation error:', tokenError);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Error generating authentication token'
+      });
+    }
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error details:', {
+      error: error.message,
+      stack: error.stack,
+      body: req.body
+    });
     res.status(500).json({
       status: 'error',
       message: 'Server error during login'

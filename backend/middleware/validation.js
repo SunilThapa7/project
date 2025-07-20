@@ -13,31 +13,46 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// User validation rules
+// Validation for user registration
 const validateRegister = [
   body('name')
     .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage('Name must be between 2 and 50 characters'),
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Name must be between 2 and 100 characters'),
   body('email')
+    .trim()
     .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .withMessage('Please enter a valid email')
+    .normalizeEmail(),
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
+    .withMessage('Password must be at least 6 characters long')
+    .matches(/\d/)
+    .withMessage('Password must contain at least one number'),
   body('phone')
     .optional()
-    .isMobilePhone('ne-NP')
-    .withMessage('Please provide a valid Nepali phone number'),
+    .trim()
+    .matches(/^[0-9+\-\s()]*$/)
+    .withMessage('Please enter a valid phone number'),
+  body('address')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Address must not exceed 500 characters'),
+  body('role')
+    .trim()
+    .isIn(['customer', 'seller'])
+    .withMessage('Invalid role selected'),
   handleValidationErrors
 ];
 
+// Validation for login
 const validateLogin = [
   body('email')
+    .trim()
     .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .withMessage('Please enter a valid email')
+    .normalizeEmail(),
   body('password')
     .notEmpty()
     .withMessage('Password is required'),
@@ -105,12 +120,11 @@ const validateCategory = [
   handleValidationErrors
 ];
 
-// ID parameter validation
+// Validation for ID parameter
 const validateId = [
   param('id')
     .isInt({ min: 1 })
-    .withMessage('Valid ID is required'),
-  handleValidationErrors
+    .withMessage('Invalid ID parameter')
 ];
 
 module.exports = {

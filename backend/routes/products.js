@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../config/database');
 const { auth, authorize } = require('../middleware/auth');
 const { validateProduct, validateId } = require('../middleware/validation');
+const axios = require('axios');
 
 const router = express.Router();
 
@@ -295,6 +296,26 @@ router.delete('/:id', auth, validateId, async (req, res) => {
     res.status(500).json({
       status: 'error',
       message: 'Server error'
+    });
+  }
+});
+
+// @route   GET /api/products/external
+// @desc    Fetch external product data using axios
+// @access  Public
+router.get('/external', async (req, res) => {
+  try {
+    // Example: Fetch product data from a public API (replace with a real API as needed)
+    const response = await axios.get('https://fakestoreapi.com/products?limit=5');
+    res.json({
+      status: 'success',
+      data: response.data
+    });
+  } catch (error) {
+    console.error('External API error:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch external product data'
     });
   }
 });
