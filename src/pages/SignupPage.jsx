@@ -1,0 +1,62 @@
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
+const SignupPage = () => {
+  const { signup, loading, error } = useContext(AuthContext);
+  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '', address: '' });
+  const [formError, setFormError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError(null);
+    const success = await signup(form);
+    if (success) {
+      navigate('/');
+    } else {
+      setFormError('Signup failed. Please check your details.');
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-primary-700 dark:text-primary-300">Sign Up</h2>
+        <div className="mb-4">
+          <label className="block mb-1 text-gray-700 dark:text-gray-300">Name</label>
+          <input type="text" name="name" value={form.name} onChange={handleChange} required className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1 text-gray-700 dark:text-gray-300">Email</label>
+          <input type="email" name="email" value={form.email} onChange={handleChange} required className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1 text-gray-700 dark:text-gray-300">Password</label>
+          <input type="password" name="password" value={form.password} onChange={handleChange} required className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1 text-gray-700 dark:text-gray-300">Phone</label>
+          <input type="text" name="phone" value={form.phone} onChange={handleChange} className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1 text-gray-700 dark:text-gray-300">Address</label>
+          <input type="text" name="address" value={form.address} onChange={handleChange} className="w-full px-3 py-2 border rounded focus:outline-none focus:ring" />
+        </div>
+        {(formError || error) && <div className="mb-4 text-red-500 text-sm">{formError || error}</div>}
+        <button type="submit" className="w-full bg-primary-600 text-white py-2 rounded hover:bg-primary-700 transition" disabled={loading}>
+          {loading ? 'Signing up...' : 'Sign Up'}
+        </button>
+        <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          Already have an account? <a href="/login" className="text-primary-600 hover:underline">Login</a>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default SignupPage; 
