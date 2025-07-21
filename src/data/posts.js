@@ -3,7 +3,7 @@ export const posts = [
   {
     id: 1,
     userId: 1,
-    username: "ramesh_farmer",
+    username: "Kp OLi",
     userAvatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
     image: "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1",
     caption: "Great harvest this season! Rice production increased by 30% using the new irrigation techniques. #RiceHarvest #ModernFarming #Nepal",
@@ -31,7 +31,7 @@ export const posts = [
   {
     id: 3,
     userId: 3,
-    username: "krishna_tech",
+    username: "Thapa Agri",
     userAvatar: "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
     image: "https://images.pexels.com/photos/2518861/pexels-photo-2518861.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1",
     caption: "New drone technology helping us monitor crop health. Technology is changing farming! Thanks to AgriConnect for the training. #AgriTech #Drones #SmartFarming",

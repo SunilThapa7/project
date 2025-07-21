@@ -2,7 +2,7 @@
 export const users = [
   {
     id: 1,
-    username: "ramesh_farmer",
+    username: "KP Oli",
     name: "Ramesh Thapa",
     avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
     bio: "Rice farmer from Chitwan. 15 years of experience in sustainable farming. Always learning new techniques!",
@@ -28,7 +28,7 @@ export const users = [
   },
   {
     id: 3,
-    username: "krishna_tech",
+    username: "thapa_agri",
     name: "Krishna Bahadur",
     avatar: "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
     bio: "Agricultural technology enthusiast. Helping farmers adopt modern farming techniques. Drone specialist.",

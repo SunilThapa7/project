@@ -27,10 +27,10 @@ const LoginPage = () => {
       return;
     }
 
-    const success = await login(email, password);
-    if (success) {
-      // Navigate based on user role
-      if (user?.role === 'admin') {
+    const loggedInUser = await login(email, password);
+    if (loggedInUser) {
+      // Navigate based on user role immediately using the returned user data
+      if (loggedInUser.role === 'admin') {
         navigate('/admin/dashboard');
       } else {
         navigate('/dashboard');

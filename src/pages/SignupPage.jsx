@@ -44,10 +44,10 @@ const SignupPage = () => {
       return;
     }
 
-    const success = await signup(form);
-    if (success) {
-      // Navigate based on role
-      if (user?.role === 'admin') {
+    const newUser = await signup(form);
+    if (newUser) {
+      // Navigate based on role using the returned user data
+      if (newUser.role === 'admin') {
         navigate('/admin/dashboard');
       } else {
         navigate('/dashboard');

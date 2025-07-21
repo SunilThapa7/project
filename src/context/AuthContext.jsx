@@ -35,10 +35,11 @@ export const AuthProvider = ({ children }) => {
       });
       const data = await res.json();
       if (res.ok && data.status === 'success') {
-        setUser(data.data.user);
+        const userData = data.data.user;
+        setUser(userData);
         setToken(data.data.token);
         setError(null);
-        return true;
+        return userData;
       } else {
         setError(data.message || data.errors?.[0]?.msg || 'Login failed');
         return false;
@@ -66,10 +67,11 @@ export const AuthProvider = ({ children }) => {
       });
       const data = await res.json();
       if (res.ok && data.status === 'success') {
-        setUser(data.data.user);
+        const userData = data.data.user;
+        setUser(userData);
         setToken(data.data.token);
         setError(null);
-        return true;
+        return userData;
       } else {
         setError(data.message || data.errors?.[0]?.msg || 'Signup failed');
         return false;

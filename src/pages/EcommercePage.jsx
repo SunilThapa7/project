@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
+import AddProductForm from '../components/products/AddProductForm';
 import { 
   Filter, 
   Search, 
@@ -9,7 +10,8 @@ import {
   ChevronDown,
   ChevronUp, 
   Plus, 
-  Minus 
+  Minus,
+  PlusCircle
 } from 'lucide-react';
 
 const EcommercePage = () => {
@@ -26,6 +28,7 @@ const EcommercePage = () => {
   const [priceRange, setPriceRange] = useState(2000);
   const [selectedRating, setSelectedRating] = useState(0);
   const [showInStock, setShowInStock] = useState(false);
+  const [showAddProduct, setShowAddProduct] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -111,13 +114,35 @@ const EcommercePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Agricultural Supplies
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Shop for high-quality tools, seeds, and supplies for your farm
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Agricultural Supplies
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Shop for high-quality tools, seeds, and supplies for your farm
+            </p>
+          </div>
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => setShowAddProduct(true)}
+              className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+            >
+              <PlusCircle className="w-5 h-5 mr-2" />
+              Add Product
+            </button>
+          )}
+        </div>
       </div>
+      
+      {showAddProduct && (
+        <AddProductForm
+          onClose={() => setShowAddProduct(false)}
+          onProductAdded={(newProduct) => {
+            setProducts([...products, newProduct]);
+          }}
+        />
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar filters */}
